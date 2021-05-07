@@ -47,7 +47,7 @@
                         <td>{{ $categoria->id }}</td>
                         <td>{{ $categoria->nombre }}</td>
                         <td>{{ $categoria->descripcion }}</td>
-                        <td><img src="{{ $categoria->image }}" height="50" width="50"></td>
+                        <td><img src="{{ $categoria->image }}" height="40" width="40"></td>
                     </tr>
 
                 @endforeach 

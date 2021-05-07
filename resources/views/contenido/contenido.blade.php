@@ -77,7 +77,9 @@
     <script src="/admin/plugins/datatables-buttons/js/buttons.html5.min.js" defer></script>
     <script src="/admin/plugins/datatables-buttons/js/buttons.print.min.js" defer></script>
     <script src="/admin/plugins/datatables-buttons/js/buttons.colVis.min.js" defer></script>
-    
+
+    <!--SweetAlert2-->
+    <script src="/sweetalert/sweetalert2.all.min.js"></script>
 
     <!--Añadimos el js generado con webpack, donde se encuentra nuestro componente vuejs-->
     <script src="/js/app.js"></script>

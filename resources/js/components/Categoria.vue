@@ -18,13 +18,28 @@
 
                                     <div class="card-body">
 
-                                        <form @submit.prevent="addProduct" method="POST" enctype = "multipart / form-data">
+                                        <form @submit.prevent="addProduct"   method="POST" enctype = "multipart / form-data">
                                             
                                             <div  class="form-group">
-                                                <label for="name">Name</label>
-                                                <input type="text" v-model="nombre"  style="border-radius:0;" class="form-control" placeholder="name">
+                                                <label for="name">Name </label> <label v-if="this.errorNombre == 1" class=" text-danger">&nbsp;&nbsp;&nbsp;Ingrese Nombre </label>
+                                                <div v-if="this.errorNombre == 1">
+                                                    <input type="text" v-model="nombre"  style="border-radius:0;box-shadow: 0 0 5px #d45252;border-color: #b03535" class="form-control" placeholder="name">
+                                                </div>
+                                                <div v-else>
+                                                    <input type="text" v-model="nombre"  style="border-radius:0;box-shadow: 0 0 5px #0092FF;border-color: #0074FF" class="form-control " placeholder="name">
+                                                </div>
                                             </div>
+                                          
 
+                                            <!--<div v-if="this.errorNombre == 1" class="mb-4 text-danger">Ingrese el nombre</div>-->
+                                            
+                                            <div v-show="errorCategoria" class="form-group row div-error">
+                                                <div class="text-center text-error">
+                                                    <div v-for="error in errorMostrarMsjCategoria" :key="error" v-text="error">
+
+                                                    </div>
+                                                </div>
+                                            </div>
                                             <div class="form-group">
                                                 <label for="descripcion" >descripcion</label>
                                                 <input type="text" v-model="descripcion" style="border-radius:0;" class="form-control" placeholder="descripcion">
@@ -32,12 +47,19 @@
 
                                             <div class="form-group">
 
-                                                <label for="imagen">Imagen(100x100)</label>
+                                                <label for="imagen">Imagen(100x100)</label><label v-if="this.errorImagen == 1" class=" text-danger">&nbsp;&nbsp;&nbsp;Ingrese la imagen </label>
 
                                                 <div class="input-group">
                                                     <div class="custom-file">
-                                                        <input type="file" class="custom-file-input"  @change="obtenerImagen" id="imagen">
-                                                        <label class="custom-file-label"  style="border-radius:0;" for="imagen">Imagen</label>
+                                                        <div v-if="this.errorImagen == 1">
+                                                            <input type="file" class="custom-file-input"  @change="obtenerImagen" id="imagen">
+                                                            <label class="custom-file-label"  style="border-radius:0;box-shadow: 0 0 5px #d45252;border-color: #b03535" for="imagen">Imagen</label>
+                                                        </div>
+                                                        <div v-else>
+                                                            <input type="file" class="custom-file-input"  @change="obtenerImagen" id="imagen">
+                                                            <label class="custom-file-label"  style="border-radius:0;" for="imagen">Imagen</label>
+                                                        </div>
+                                                        
                                                     </div>
 
                                                 </div>
@@ -45,13 +67,15 @@
 
                                             <figure v-if="imagen">
                                                 <img width="100" height="100" :src="imagen" alt="Foto de la Categoria">
-                                            </figure><br>
+                                            </figure>
+                                            
+                                            <br>
                                             
                                             <div class="form-group row">
 
                                                 <div class="col-md-12">
                                                     <a type="button"  style="border-radius:0;" href="/categoria" class="btn btn-secondary">Cerrar</a>
-                                                    <button type="submit"  style="border-radius:0;" class="btn btn-primary" >Registrar Venta</button>
+                                                    <button type="submit"  style="border-radius:0;"  class="btn btn-primary" >Registrar Venta</button>
                                                 </div>
 
                                             </div>
@@ -77,11 +101,10 @@
 
 <script>
 
-
-    
     export default {
         mounted() {
             this.listarCategoria();
+            
         },
         data (){
             return {
@@ -100,6 +123,9 @@
                 tituloModal : '',
                 tipoAccion : 0,
                 errorCategoria : 0,
+                errorNombre : 0,
+                errorImagen : 0,
+                errorImagen : '',
                 errorMostrarMsjCategoria : [],
                 pagination : {
                     'total' : 0,
@@ -150,6 +176,9 @@
                 reader.readAsDataURL(file);
             },
             addProduct(){
+                if (this.validarCategoria()){
+                    return;
+                }
                 let me = this;
                 let formData = new FormData();
                 formData.append('nombre',this.nombre);
@@ -161,44 +190,17 @@
                     me.nombre='';
                     me.descripcion='';
                     me.imagenMiniatura = '';
+                    me.guardarCategoria();
                     window.location = '/categoria';
 
                     console.log(responses.data);
                 })
-            },
-            profileUpload(){
-            let data = new FormData;
-            data.append('image', this.image);
-            axios.post('../userprofile', data)
-            .then(()=>{
-                window.location = '../profile';
-            }).catch(()=>{
-            })
-        },
+            }, 
             
-            actualizarCategoria(){
-               if (this.validarCategoria()){
-                    return;
-                }
-                
-                let me = this;
-
-                axios.put('/categoria/actualizar',{
-                    'nombre': this.nombre,
-                    'descripcion': this.descripcion,
-                    'id': this.categoria_id
-                }).then(function (response) {
-                    /*me.cerrarRegistro();
-                    */
-                }).catch(function (error) {
-                    console.log(error);
-                }); 
-            },
             mostrarDetalle(){
                 let me=this;
                 
                 me.listado=0;
-
                
             },
             cerrarRegistro(){
@@ -206,143 +208,89 @@
                 this.descripcion='';
                 this.imagenMiniatura='';
             },
-            desactivarCategoria(id){
-               swal({
-                title: 'Esta seguro de desactivar esta categoría?',
-                type: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Aceptar!',
-                cancelButtonText: 'Cancelar',
-                confirmButtonClass: 'btn btn-success',
-                cancelButtonClass: 'btn btn-danger',
-                buttonsStyling: false,
-                reverseButtons: true
-                }).then((result) => {
-                if (result.value) {
-                    let me = this;
+            
+            guardarCategoria(){
+            
+                Swal.fire({
+                    position: 'center',
+                    icon: 'success',
+                    title: 'La categoria ha sido guardada exitosamente',
+                    showConfirmButton: false,
+                    timer: 1500
+                })
 
-                    axios.put('/categoria/desactivar',{
-                        'id': id
-                    }).then(function (response) {
-                        
-                        swal(
-                        'Desactivado!',
-                        'El registro ha sido desactivado con éxito.',
-                        'success'
-                        )
-                    }).catch(function (error) {
-                        console.log(error);
-                    });
-                    
-                    
-                } else if (
-                    // Read more about handling dismissals
-                    result.dismiss === swal.DismissReason.cancel
-                ) {
-                    
-                }
-                }) 
-            },
-            activarCategoria(id){
-               swal({
-                title: 'Esta seguro de activar esta categoría?',
-                type: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Aceptar!',
-                cancelButtonText: 'Cancelar',
-                confirmButtonClass: 'btn btn-success',
-                cancelButtonClass: 'btn btn-danger',
-                buttonsStyling: false,
-                reverseButtons: true
-                }).then((result) => {
-                if (result.value) {
-                    let me = this;
-
-                    axios.put('/categoria/activar',{
-                        'id': id
-                    }).then(function (response) {
-                        
-                        swal(
-                        'Activado!',
-                        'El registro ha sido activado con éxito.',
-                        'success'
-                        )
-                    }).catch(function (error) {
-                        console.log(error);
-                    });
-                    
-                    
-                } else if (
-                    // Read more about handling dismissals
-                    result.dismiss === swal.DismissReason.cancel
-                ) {
-                    
-                }
-                }) 
             },
             validarCategoria(){
-                this.errorCategoria=0;
-                this.errorMostrarMsjCategoria =[];
+              
+                this.errorNombre =0;
+                this.errorImagen =0;
 
-                if (!this.nombre) this.errorMostrarMsjCategoria.push("El nombre de la categoría no puede estar vacío.");
+                if (!this.nombre) {
 
-                if (this.errorMostrarMsjCategoria.length) this.errorCategoria = 1;
-
-                return this.errorCategoria;
-            },
-            cerrarModal(){
-                this.modal=0;
-                this.tituloModal='';
-                this.nombre='';
-                this.descripcion='';
-            },
-            abrirModal(modelo, accion, data = []){
-                switch(modelo){
-                    case "categoria":
-                    {
-                        switch(accion){
-                            case 'registrar':
-                            {
-                                this.listado = 0;
-                                this.nombre= '';
-                                this.descripcion = '';
-                                this.tipoAccion = 1;
-                                $(function () {
-                                    $('#example1').DataTable( {
-                                        data: response.data,
-                                        
-                                        columns: [
-                                            { data: 'id' },
-                                            { data: 'nombre' },
-                                            { data: 'descripcion' },
-                                            { data: 'image' }
-                                        ]
-                                    } );
-                                });
-                                break;
-                            }
-                            case 'actualizar':
-                            {
-                                //console.log(data);
-                                this.modal=1;
-                                this.tituloModal='Actualizar categoría';
-                                this.tipoAccion=2;
-                                this.categoria_id=data['id'];
-                                this.nombre = data['nombre'];
-                                this.descripcion= data['descripcion'];
-                                break;
-                            }
-                        }
-                    }
+                   this.errorNombre =1;
+                    
                 }
-            }
+                if(!this.imagenMiniatura){
+                    
+                    this.errorImagen =1;
+
+                }
+              
+            },
+           
         },
         
     }
 </script>
 
-<style>    
+<style>
+
+
+    @media only screen and (max-width: 606px) and (min-width: 320px)  {
+
+        .button-registrar{
+            padding: .325rem .525rem;
+            font-size: .77rem;
+            line-height: 1.5;
+            border-radius: .15rem;
+        }
+
+        .button-importar{
+            padding: .325rem .525rem;
+            font-size: .77rem;
+            line-height: 1.5;
+            border-radius: .15rem;
+        }
+
+        .button-exportar{
+            padding: .325rem .525rem;
+            font-size: .77rem;
+            line-height: 1.5;
+            border-radius: .15rem;
+        }
+
+        .button-reportar{
+            padding: .325rem .525rem;
+            font-size: .77rem;
+            line-height: 1.5;
+            border-radius: .15rem;
+            /**padding: .225rem .525rem;
+            font-size: .805rem;
+            line-height: 1.5;
+            border-radius: .15rem; */
+        }
+
+    }
+    
+
+        @media only screen and (max-width: 553px) and (min-width: 320px)  {
+
+        table.table{
+                flex: 1 1 auto;
+                min-height: 1px;
+                padding: 1.25rem;
+        }
+
+    }
+
+</style>    
