@@ -18,15 +18,15 @@
 
                                     <div class="card-body">
 
-                                        <form @submit.prevent="addProduct"   method="POST" enctype = "multipart / form-data">
+                                        <form id="quickForm" @submit.prevent="addProduct"   method="POST" enctype = "multipart / form-data">
                                             
                                             <div  class="form-group">
-                                                <label for="name">Name </label> <label v-if="this.errorNombre == 1" class=" text-danger">&nbsp;&nbsp;&nbsp;Ingrese Nombre </label>
+                                                <label for="name">Name </label><!-- <label v-if="this.errorNombre == 1" class=" text-danger">&nbsp;&nbsp;&nbsp;Ingrese Nombre </label>-->
                                                 <div v-if="this.errorNombre == 1">
-                                                    <input type="text" v-model="nombre"  style="border-radius:0;box-shadow: 0 0 5px #d45252;border-color: #b03535" class="form-control" placeholder="name">
+                                                    <input type="text" v-model="nombre" name="text" style="border-radius:0;" class="form-control" placeholder="name">
                                                 </div>
                                                 <div v-else>
-                                                    <input type="text" v-model="nombre"  style="border-radius:0;box-shadow: 0 0 5px #0092FF;border-color: #0074FF" class="form-control " placeholder="name">
+                                                    <input type="text" v-model="nombre" name="text" style="border-radius:0;" class="form-control " placeholder="name">
                                                 </div>
                                             </div>
                                           
@@ -42,22 +42,19 @@
                                             </div>
                                             <div class="form-group">
                                                 <label for="descripcion" >descripcion</label>
-                                                <input type="text" v-model="descripcion" style="border-radius:0;" class="form-control" placeholder="descripcion">
+                                                <input type="text"  v-model="descripcion" style="border-radius:0;" class="form-control" placeholder="descripcion">
                                             </div>
 
                                             <div class="form-group">
 
-                                                <label for="imagen">Imagen(100x100)</label><label v-if="this.errorImagen == 1" class=" text-danger">&nbsp;&nbsp;&nbsp;Ingrese la imagen </label>
-
+                                                <label for="imagen" name="file">Imagen(100x100)</label><!--<label v-if="this.errorImagen == 1" class=" text-danger">&nbsp;&nbsp;&nbsp;Ingrese la imagen </label>
+-->
                                                 <div class="input-group">
                                                     <div class="custom-file">
-                                                        <div v-if="this.errorImagen == 1">
-                                                            <input type="file" class="custom-file-input"  @change="obtenerImagen" id="imagen">
-                                                            <label class="custom-file-label"  style="border-radius:0;box-shadow: 0 0 5px #d45252;border-color: #b03535" for="imagen">Imagen</label>
-                                                        </div>
-                                                        <div v-else>
-                                                            <input type="file" class="custom-file-input"  @change="obtenerImagen" id="imagen">
-                                                            <label class="custom-file-label"  style="border-radius:0;" for="imagen">Imagen</label>
+                                                        
+                                                        <div>
+                                                            <input type="file" class="custom-file-input" name="file" @change="obtenerImagen" id="imagen">
+                                                            <label class="custom-file-label" name="file" style="border-radius:0;" for="imagen">Imagen</label>
                                                         </div>
                                                         
                                                     </div>
@@ -66,7 +63,7 @@
                                             </div>
 
                                             <figure v-if="imagen">
-                                                <img width="100" height="100" :src="imagen" alt="Foto de la Categoria">
+                                                <img width="100"  height="100" name="file" :src="imagen" alt="Foto de la Categoria">
                                             </figure>
                                             
                                             <br>
@@ -81,6 +78,7 @@
                                             </div>
 
                                         </form>
+                                        
 
                                     </div>
                                     
@@ -100,6 +98,67 @@
 </template>
 
 <script>
+
+    $(function () {
+  
+  $('#quickForm').validate({
+    rules: {
+    email: {
+        required: true,
+        email: true,
+      },
+      text: {
+        required: true,
+        text: false,
+      },
+      descripcion: {
+        required: true,
+        descripcion: false,
+      },
+      file: {
+        required: true,
+        file: false,
+      },
+      password: {
+        required: true,
+        minlength: 5
+      },
+      terms: {
+        required: true
+      },
+    },
+    messages: {
+      email: {
+        required: "Ingrese un nombre para la categoria",
+        email : "Ingrese un correo valido",
+      },
+      text: {
+        required: "Ingrese un nombre para la categoria",
+      },
+      file: {
+        required: "Ingrese una imagen para la categoria",
+         file : "Ingrese un correo valido",
+      },
+      password: {
+        required: "Please provide a password",
+        minlength: "Your password must be at least 5 characters long"
+      },
+      terms: "Please accept our terms"
+    },
+    errorElement: 'span',
+    errorPlacement: function (error, element) {
+      error.addClass('invalid-feedback');
+      element.closest('.form-group').append(error);
+    },
+    highlight: function (element, errorClass, validClass) {
+      $(element).addClass('is-invalid');
+    },
+    unhighlight: function (element, errorClass, validClass) {
+      $(element).removeClass('is-invalid');
+    }
+  });
+});
+
 
     export default {
         mounted() {

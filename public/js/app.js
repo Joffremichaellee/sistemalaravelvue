@@ -1946,8 +1946,64 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
-//
-//
+$(function () {
+  $('#quickForm').validate({
+    rules: {
+      email: {
+        required: true,
+        email: true
+      },
+      text: {
+        required: true,
+        text: false
+      },
+      descripcion: {
+        required: true,
+        descripcion: false
+      },
+      file: {
+        required: true,
+        file: false
+      },
+      password: {
+        required: true,
+        minlength: 5
+      },
+      terms: {
+        required: true
+      }
+    },
+    messages: {
+      email: {
+        required: "Ingrese un nombre para la categoria",
+        email: "Ingrese un correo valido"
+      },
+      text: {
+        required: "Ingrese un nombre para la categoria"
+      },
+      file: {
+        required: "Ingrese una imagen para la categoria",
+        file: "Ingrese un correo valido"
+      },
+      password: {
+        required: "Please provide a password",
+        minlength: "Your password must be at least 5 characters long"
+      },
+      terms: "Please accept our terms"
+    },
+    errorElement: 'span',
+    errorPlacement: function errorPlacement(error, element) {
+      error.addClass('invalid-feedback');
+      element.closest('.form-group').append(error);
+    },
+    highlight: function highlight(element, errorClass, validClass) {
+      $(element).addClass('is-invalid');
+    },
+    unhighlight: function unhighlight(element, errorClass, validClass) {
+      $(element).removeClass('is-invalid');
+    }
+  });
+});
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   mounted: function mounted() {
     this.listarCategoria();
@@ -37851,7 +37907,11 @@ var render = function() {
                 _c(
                   "form",
                   {
-                    attrs: { method: "POST", enctype: "multipart / form-data" },
+                    attrs: {
+                      id: "quickForm",
+                      method: "POST",
+                      enctype: "multipart / form-data"
+                    },
                     on: {
                       submit: function($event) {
                         $event.preventDefault()
@@ -37866,12 +37926,6 @@ var render = function() {
                       ]),
                       _vm._v(" "),
                       this.errorNombre == 1
-                        ? _c("label", { staticClass: " text-danger" }, [
-                            _vm._v("   Ingrese Nombre ")
-                          ])
-                        : _vm._e(),
-                      _vm._v(" "),
-                      this.errorNombre == 1
                         ? _c("div", [
                             _c("input", {
                               directives: [
@@ -37883,12 +37937,12 @@ var render = function() {
                                 }
                               ],
                               staticClass: "form-control",
-                              staticStyle: {
-                                "border-radius": "0",
-                                "box-shadow": "0 0 5px #d45252",
-                                "border-color": "#b03535"
+                              staticStyle: { "border-radius": "0" },
+                              attrs: {
+                                type: "text",
+                                name: "text",
+                                placeholder: "name"
                               },
-                              attrs: { type: "text", placeholder: "name" },
                               domProps: { value: _vm.nombre },
                               on: {
                                 input: function($event) {
@@ -37911,12 +37965,12 @@ var render = function() {
                                 }
                               ],
                               staticClass: "form-control ",
-                              staticStyle: {
-                                "border-radius": "0",
-                                "box-shadow": "0 0 5px #0092FF",
-                                "border-color": "#0074FF"
+                              staticStyle: { "border-radius": "0" },
+                              attrs: {
+                                type: "text",
+                                name: "text",
+                                placeholder: "name"
                               },
-                              attrs: { type: "text", placeholder: "name" },
                               domProps: { value: _vm.nombre },
                               on: {
                                 input: function($event) {
@@ -37988,56 +38042,33 @@ var render = function() {
                     ]),
                     _vm._v(" "),
                     _c("div", { staticClass: "form-group" }, [
-                      _c("label", { attrs: { for: "imagen" } }, [
+                      _c("label", { attrs: { for: "imagen", name: "file" } }, [
                         _vm._v("Imagen(100x100)")
                       ]),
-                      this.errorImagen == 1
-                        ? _c("label", { staticClass: " text-danger" }, [
-                            _vm._v("   Ingrese la imagen ")
-                          ])
-                        : _vm._e(),
                       _vm._v(" "),
                       _c("div", { staticClass: "input-group" }, [
                         _c("div", { staticClass: "custom-file" }, [
-                          this.errorImagen == 1
-                            ? _c("div", [
-                                _c("input", {
-                                  staticClass: "custom-file-input",
-                                  attrs: { type: "file", id: "imagen" },
-                                  on: { change: _vm.obtenerImagen }
-                                }),
-                                _vm._v(" "),
-                                _c(
-                                  "label",
-                                  {
-                                    staticClass: "custom-file-label",
-                                    staticStyle: {
-                                      "border-radius": "0",
-                                      "box-shadow": "0 0 5px #d45252",
-                                      "border-color": "#b03535"
-                                    },
-                                    attrs: { for: "imagen" }
-                                  },
-                                  [_vm._v("Imagen")]
-                                )
-                              ])
-                            : _c("div", [
-                                _c("input", {
-                                  staticClass: "custom-file-input",
-                                  attrs: { type: "file", id: "imagen" },
-                                  on: { change: _vm.obtenerImagen }
-                                }),
-                                _vm._v(" "),
-                                _c(
-                                  "label",
-                                  {
-                                    staticClass: "custom-file-label",
-                                    staticStyle: { "border-radius": "0" },
-                                    attrs: { for: "imagen" }
-                                  },
-                                  [_vm._v("Imagen")]
-                                )
-                              ])
+                          _c("div", [
+                            _c("input", {
+                              staticClass: "custom-file-input",
+                              attrs: {
+                                type: "file",
+                                name: "file",
+                                id: "imagen"
+                              },
+                              on: { change: _vm.obtenerImagen }
+                            }),
+                            _vm._v(" "),
+                            _c(
+                              "label",
+                              {
+                                staticClass: "custom-file-label",
+                                staticStyle: { "border-radius": "0" },
+                                attrs: { name: "file", for: "imagen" }
+                              },
+                              [_vm._v("Imagen")]
+                            )
+                          ])
                         ])
                       ])
                     ]),
@@ -38048,6 +38079,7 @@ var render = function() {
                             attrs: {
                               width: "100",
                               height: "100",
+                              name: "file",
                               src: _vm.imagen,
                               alt: "Foto de la Categoria"
                             }

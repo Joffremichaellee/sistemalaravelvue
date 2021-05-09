@@ -2,6 +2,8 @@
 
     @section('contenido')
 
+    
+
     <div class="card-header" style="padding: 0px 0px 18px; font-family: 'Rubik', sans-serif;">
         <a href="{{'categoria/nuevacategoria'}}" type="button" class="btn btn-success button-registrar" style="border-radius:0;">
             <i class="icon-plus"></i>Nueva Categoria

@@ -19,7 +19,7 @@ class CategoriaController extends Controller
     public function index(Request $request)
         {
             
-            $categorias =  Categoria::all();
+            $categorias =  Categoria::orderBy('created_at', 'DESC')->get();
 
             return view('vistas.categoria', compact('categorias'));
                     
